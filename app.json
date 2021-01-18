@@ -1,0 +1,12 @@
+{
+  "name": "frontend_task",
+  "displayName": "frontend_task",
+  "expo": {
+    "name": "frontend_task",
+    "slug": "frontend_task",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
