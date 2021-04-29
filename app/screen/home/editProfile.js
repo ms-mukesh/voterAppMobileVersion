@@ -21,27 +21,14 @@ import {connect, useSelector} from 'react-redux';
 import {validateAdhaarNo, validateEmail, checkNamesIsEmpty} from '../../helper/validation';
 // import {fetchDataForEdit, updateUserProfile, setUserDetails} from '../../actions/UserAction';
 import {FloatingLabel} from '../common';
-// import EvilIconsIcon from 'react-native-vector-icons/EvilIcons';
-// import Fontisto from 'react-native-vector-icons/Fontisto';
-// import AntDesign from 'react-native-vector-icons/AntDesign';
-// import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-// import Foundation from 'react-native-vector-icons/Foundation';
-// import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-// import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-// import FontAwesome from 'react-native-vector-icons/FontAwesome';
-// import FeatherIcon from 'react-native-vector-icons/Feather';
-// import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import DatePickerModel from '../common/DatePickerModelForEdit';
 import AutoCompleteModal from '../common/AutoCompleteBox';
 import {useSafeArea} from 'react-native-safe-area-context';
 import {CommonActions} from '@react-navigation/native';
-// import ImagePicker from 'react-native-image-picker';
-// import ImageCropPicker from 'react-native-image-crop-picker';
-// import {isDefined, uploadImageOnFirebase} from '../functions';
-import {LOADING} from "../../redux/types";
 import {useDispatch} from 'react-redux';
-import _ from 'lodash';
+
 
 const defaultUserMaleImage = require('../../assets/images/user_male.png');
 const defaultUserFemaleImage = require('../../assets/images/user_female.png');
@@ -82,7 +69,7 @@ const EditProfile = props => {
     useEffect(() => {
         setBackArrowFlag(true);
         dispatch(fetchMemberDetail()).then(async (res)=>{
-            console.log("res--",res)
+            console.log("res--",res?.UserData?.Data[0])
             if(res){
                 await setUser(res?.UserData?.Data[0])
                 await setSearchData(res?.SearchData)
@@ -669,6 +656,7 @@ const EditProfile = props => {
                     dispatch(setLoaderStatus(false));
                 });
         }
+        console.log("obj--",{userDataObj: updateObj})
         dispatch(updateUserProfile({userDataObj: updateObj})).then(async (res)=>{
             let editName = updateObj.FirstName + ' ' + updateObj.MiddleName + ' ' + updateObj.LastName;
             updateValueForRedux = {

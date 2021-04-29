@@ -41,7 +41,7 @@ import DefaultMaleIcon from "../../assets/images/user_male.png";
 import {ImageFullScreenPreview} from "../common/ImageFullScreenPreview";
 import {search_icon,cross_black_icon} from "../../assets/images";
 import {getToken} from "../../api/getToken";
-import {ADMIN, IS_OUR_ENFLUENCER} from "../../helper/constant";
+import {ADMIN, IS_OUR_ENFLUENCER, UPLOAD_DATA_LIMIT} from "../../helper/constant";
 import {exportFile, isDefined} from "../functions";
 import * as Permissions from 'expo-permissions';
 import {usePermissions} from "expo-permissions";
@@ -484,6 +484,7 @@ const Dashboard = props => {
         isPull && setRefreshPage(true);
         if (endpoint !== null || endpoint !== 'null' || endpoint.indexOf('null') < 0) {
             dispatch(getVoterList(endpoint, isPull)).then(res => {
+
                 isPull && setRefreshPage(false);
                 if (!res /*&& temp === 0*/) {
                     setOnEndReachedCalledDuringMomentum(false);
@@ -754,52 +755,40 @@ const Dashboard = props => {
             // type: "vnd.openxmlformats-officedocument.spreadsheetml.sheet" // .xlsx
             // type: "text/csv" // .csv
         });
-        console.log("result--",result)
         let csvData = []
         if(result){
             await FileSystem.readAsStringAsync(result?.uri,{encoding:'base64'}).then(b64 => XLSX.read(b64, {type: "base64"})).then(wb => { csvData = XLSX.utils.sheet_to_json(wb?.Sheets.Sheet1) });
-            // await FileSystem.readAsStringAsync(result?.uri,{encoding:'base64',length:30540745,position: 2147483648}).then((data)=>{
-            //     console.log("data---",data)
-            // })
-            console.log("csv data--",csvData)
             if(csvData.length>0){
-                console.log("csv data--",csvData)
                 if(isDefined(csvData[0].AcNameEn) && isDefined(csvData[0].PollingAddressEn) && isDefined(csvData[0].Age) && isDefined(csvData[0].SectionNameEn) &&
                     isDefined(csvData[0].PartNameEn) && isDefined(csvData[0].RelationName)  && isDefined(csvData[0].RelayionType) && isDefined(csvData[0].Sex)
                     && isDefined(csvData[0].SectionNo) && isDefined(csvData[0].VoterId) && isDefined(csvData[0].VoterNameEn) && isDefined(csvData[0].VoterName)
                 ){
                     await setExcelData([...csvData])
-                    dispatch(insertBulkData({csvData:csvData.slice(0,50)})).then((res)=>{
-                        getData()
-                        if(res){
-                            Alert.alert(
-                                '',
-                                'Voter Added to List',
-                                [
-                                    {
-                                        text: 'OK',
-                                        onPress: () => {
-                                            console.log('ok');
-                                        },
-                                    },
-
-                                ],
-                                {
-                                    cancelable: true,
-                                }
-                            );
-                        }
-                    }).catch((err)=>{
-                        console.log(err)
-
-                    })
-                    // setExcelItemPreviewFlag(true)
-                    // await setExcelData([...csvData])
-                    // dispatch(insertBulkData({csvData:csvData})).then((res)=>{
-                    //     if(res){
-                    //         alert("added data")
-                    //     }
-                    // })
+                    const loopCount = Math.ceil(csvData.length / UPLOAD_DATA_LIMIT);
+                    let startIndex = 0;
+                    let endIndex = UPLOAD_DATA_LIMIT;
+                    let temp = 0;
+                    let i = 0;
+                    while (i<loopCount){
+                        await dispatch(insertBulkData({csvData:csvData.slice(startIndex, endIndex)})).then((res)=>{
+                            // getData()
+                            console.log(i,"api call response",res)
+                            temp = csvData.length - UPLOAD_DATA_LIMIT;
+                            startIndex = endIndex;
+                            if (temp >= UPLOAD_DATA_LIMIT) {
+                                endIndex += UPLOAD_DATA_LIMIT;
+                            } else {
+                                endIndex = temp;
+                            }
+                            if(i==loopCount-1){
+                                alert("Data exported successfully!")
+                                i = loopCount + 1;
+                            }
+                            i++;
+                        }).catch((err)=>{
+                            console.log(err)
+                        })
+                    }
                 } else {
                     alert("invalid excel file ")
                     dispatch(setLoaderStatus(false))

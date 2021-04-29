@@ -25,6 +25,7 @@ export const IS_OUR_ENFLUENCER_FOR_INSERT = "1"
 export const GENDER_CHECK = "1"
 export const ALIVE_CHECK = "1"
 export const GENDER = "1"
+export const UPLOAD_DATA_LIMIT = 500
 
 export const TRUST_FACTOR = {
     ourSupport:"1",

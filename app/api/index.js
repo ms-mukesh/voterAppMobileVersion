@@ -34,7 +34,8 @@ export const Api = async (endpoint, method, data = null) => {
   // let baseurl = 'https://testing-app-for-apk3.herokuapp.com/';//apk-3
   // let baseurl = 'http://192.168.0.2:3000/';
   // let baseurl = 'http://139.59.1.188:3000/';//--digitalOcean URL
-  let baseurl = 'http://192.168.0.3:3000/';
+  // let baseurl = 'http://192.168.0.2:3000/';
+  let baseurl = 'http://3.14.151.80:3000/'; ///---ec2 URL
 
   let url = baseurl + endpoint;
   // checkConnectivity().then((res)=>{
@@ -53,7 +54,6 @@ export const Api = async (endpoint, method, data = null) => {
           return axios
             .get(url,{headers: header})
             .then(res => {
-              console.log("--res--",res)
               if (res.status === 200) {
                 if (
                   res.data.errCode &&

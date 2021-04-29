@@ -55,7 +55,7 @@ const LoginScreen = props => {
     const isLoading = useSelector(state => state.appDefaultSettingReducer.isLoading);
     const [userdata, setUserData] = useState({
         mobile:temp,
-        password: '123456',
+        password: '',
         dob: '',
         dobForState: '',
         token: '',
@@ -63,7 +63,7 @@ const LoginScreen = props => {
         fromLogin: false,
         memberId: 0,
         deviceId: '',
-        email: 'admin1@gmail.com',
+        email: '',
     });
     const [isValidUserName, setUsernameState] = useState(true);
     const [isValidPwd, setIsValidPwd] = useState(true);
